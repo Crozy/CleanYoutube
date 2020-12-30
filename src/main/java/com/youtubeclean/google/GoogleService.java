@@ -17,25 +17,28 @@ public class GoogleService {
 	@Autowired
 	GoogleManage googleManage;
 
-	public void getListChannel(String PageToken) throws GeneralSecurityException, IOException {
+	public SubscriptionListResponse getListChannel(String PageToken) throws GeneralSecurityException, IOException {
 		YouTube youtubeService = googleManage.getService();
 		// Define and execute the API request
 		YouTube.Subscriptions.List request = youtubeService.subscriptions().list("snippet,contentDetails");
-		SubscriptionListResponse response = request.setMine(true)
+		SubscriptionListResponse response = request
+				.setMine(true)
 				.setMaxResults(50L)
 				.setPageToken(PageToken)
 				.execute();
 		System.out.println(response);
+		return response;
 	}
 	
-    public void getChannelById()
+    public ChannelListResponse getChannelById(String idChannel)
             throws GeneralSecurityException, IOException, GoogleJsonResponseException {
             YouTube youtubeService = googleManage.getService();
             // Define and execute the API request
             YouTube.Channels.List request = youtubeService.channels()
                 .list("snippet,contentDetails,statistics");
-            ChannelListResponse response = request.setId("UCKH9HfYY_GEcyltl2mbD5lA").execute();
+            ChannelListResponse response = request.setId(idChannel).execute();
             System.out.println(response);
+            return response;
         }
 
 }

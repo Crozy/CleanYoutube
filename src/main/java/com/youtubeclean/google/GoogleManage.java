@@ -33,6 +33,8 @@ public class GoogleManage {
 
 	private static final String APPLICATION_NAME = "API code samples";
 	private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
+	
+	private Credential credential = null;
 
 	/**
 	 * Create an authorized Credential object.
@@ -41,13 +43,19 @@ public class GoogleManage {
 	 * @throws IOException
 	 */
 	public Credential authorize(final NetHttpTransport httpTransport) throws IOException {
+		
+		if(credential != null && credential.getExpiresInSeconds() > 0) {
+			return credential;
+		}
+		
 		InputStream targetStream = new FileInputStream(this.getClientSecretFile());
 		GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(targetStream));
 		// Build flow and trigger user authorization request.
 		GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(httpTransport, JSON_FACTORY,
 				clientSecrets, SCOPES).build();
-		Credential credential = new AuthorizationCodeInstalledApp(flow, new LocalServerReceiver()).authorize("user");
-
+		credential = new AuthorizationCodeInstalledApp(flow, new LocalServerReceiver()).authorize("user");
+		System.out.println("Temps : " + credential.getExpiresInSeconds());
+				
 		return credential;
 	}
 
