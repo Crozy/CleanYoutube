@@ -1,4 +1,4 @@
-package com.example.demo;
+package com.youtubeclean;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.example.demo.google.GoogleService;
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
+import com.youtubeclean.google.GoogleService;
 
 @Controller
 public class EndPoints {
