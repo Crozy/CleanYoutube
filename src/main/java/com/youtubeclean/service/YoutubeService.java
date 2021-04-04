@@ -1,18 +1,18 @@
 package com.youtubeclean.service;
 
-import java.io.IOException;
-import java.security.GeneralSecurityException;
-import java.util.ArrayList;
-import java.util.List;
-
+import com.google.api.services.youtube.model.*;
+import com.youtubeclean.google.GoogleService;
+import com.youtubeclean.models.ChannelYoutubeClean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.google.api.services.youtube.model.ChannelListResponse;
-import com.google.api.services.youtube.model.Subscription;
-import com.google.api.services.youtube.model.SubscriptionListResponse;
-import com.youtubeclean.google.GoogleService;
-import com.youtubeclean.models.ChannelYoutubeClean;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.text.Format;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @Service
 public class YoutubeService {
@@ -49,6 +49,16 @@ public class YoutubeService {
 			try {
 				ChannelListResponse channelDetail = googleService.getChannelById(channelYoutubeClean.getId());
 				channelYoutubeClean.setCreateDate(channelDetail.getItems().get(0).getSnippet().getPublishedAt().toString());
+				//DateTime lastActivity = this.activityChannel(channelYoutubeClean.getId()).getItems().get(0).getSnippet().getPublishedAt();
+				List<Activity> activity = this.activityChannel(channelYoutubeClean.getId()).getItems();
+				Long lastActivity = activity.size() > 0 ? activity.get(0).getSnippet().getPublishedAt().getValue() : null;
+				if (lastActivity != null) {
+					Date date = new Date(lastActivity);
+					Format format = new SimpleDateFormat("yyyy MM dd HH:mm:ss");
+					channelYoutubeClean.setActivityDate(format.format(date));
+				} else {
+					channelYoutubeClean.setActivityDate(null);
+				}
 			} catch (GeneralSecurityException | IOException e) {
 				e.printStackTrace();
 			}
@@ -56,6 +66,10 @@ public class YoutubeService {
 		});
 		
 		return listChannelYoutubeClean;
+	}
+
+	public ActivityListResponse activityChannel(String idCHannel) throws GeneralSecurityException, IOException {
+		return googleService.channelActivity(idCHannel, "");
 	}
 	
 }

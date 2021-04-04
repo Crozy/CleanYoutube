@@ -3,6 +3,7 @@ package com.youtubeclean.google;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 
+import com.google.api.services.youtube.model.ActivityListResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,7 +27,7 @@ public class GoogleService {
 				.setMaxResults(50L)
 				.setPageToken(PageToken)
 				.execute();
-		System.out.println(response);
+		//System.out.println(response);
 		return response;
 	}
 	
@@ -37,8 +38,20 @@ public class GoogleService {
             YouTube.Channels.List request = youtubeService.channels()
                 .list("snippet,contentDetails,statistics");
             ChannelListResponse response = request.setId(idChannel).execute();
-            System.out.println(response);
+            //System.out.println(response);
             return response;
         }
+
+        public ActivityListResponse channelActivity(String idChannel, String PageToken) throws GeneralSecurityException, IOException {
+			YouTube youtubeService = googleManage.getService();
+			// Define and execute the API request
+			YouTube.Activities.List request = youtubeService.activities()
+					.list("snippet");
+			ActivityListResponse response = request.setChannelId(idChannel)
+					.setMaxResults(1L)
+					.setPageToken(PageToken)
+					.execute();
+			return response;
+		}
 
 }
